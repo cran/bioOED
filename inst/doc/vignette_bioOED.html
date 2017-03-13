@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Alberto Garre, Jose Lucas Peñalver Soto, Pablo S. Fernandez, Jose A. Egea" />
+
+<meta name="date" content="2017-03-12" />
+
+<title>bioOED: Optimum Experiment Design for Microbial Inactivation</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">bioOED: Optimum Experiment Design for Microbial Inactivation</h1>
+<h4 class="author"><em>Alberto Garre, Jose Lucas Peñalver Soto, Pablo S. Fernandez, Jose A. Egea</em></h4>
+<h4 class="date"><em>2017-03-12</em></h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The mathematical models commonly used for the description of microbial inactivation contain parameters whose exact value, at the time, cannot be analytically determined. Hence, they have to be estimated using experiments. This type of procedures do not provide an exact value of the model parameters. Instead, they estimate their probability distribution.</p>
+<p>The level of uncertainty strongly depends on the experiment performed. For instance, Grijspeerd and Vanrrolleghem (1999) are able to half the estimated standard deviation of the model parameters for microbial growth using an optimum experiment design. This results in a more accurate description of the process.</p>
+<p>The R-package <strong>bioOED</strong> implements functions for the design of optimum experiments, as well as for the calculation of local sensitivities, of microbial inactivation processes. This package can be downloaded form the Comprehensive R Archive Network (CRAN). Once installed, it can be loaded as</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bioOED)</code></pre></div>
+<p><strong>bioOED</strong> adds the following functions to the namespace:</p>
+<ul>
+<li><em>sensitivity_inactivation()</em>: calculates the local sensitivity functions of the output variable for a given set of nominal model parameters.</li>
+<li><em>calculate_pars_correlation()</em>: calculates the correlation between the sensitivity functions of the model parameters (i.e. the structural identificability) for a set of nominal model parameters.</li>
+<li><em>calculate_FIM()</em>: calculates the Fisher Information Matrix (FIM).</li>
+<li><em>optimize_refTemp()</em>: finds the reference temperature which optimizes the structural identificability of the model.</li>
+<li><em>inactivation_OED()</em>: Designs an optimum experiment based on a given measurement of the FIM.</li>
+<li><em>inactivation_OED_penalty()</em>: Similar to <em>inactivation_OED()</em>, although including a penalty term which penalizes measurements closer than a given threshold.</li>
+</ul>
+<p>The simulations of microbial inactivation performed by <strong>bioOED</strong> are based on the functions implemented in the <strong>bioinactivation</strong> (Garre et al., 2016) package. Hence, only the inactivation models implemented in this package (Bigelow, Peleg, Mafart and Geeraerd) are available in <strong>bioOED</strong>. The calculation of local sensitivities is based on the features implemented in the <strong>FME</strong> package (Soetaert et al., 2010).</p>
+</div>
+<div id="fisher-information-matrix" class="section level2">
+<h2>Fisher Information Matrix</h2>
+<p>The Fisher Information Matrix (<span class="math inline">\(FIM\)</span>) for a variable <span class="math inline">\(y\)</span> which depends on a vector of parameters (<span class="math inline">\(\theta\)</span>) at a series of time points (<span class="math inline">\(t_i\)</span>) is defined by the following equation:</p>
+<p><span class="math display">\[
+    FIM = \sum_i \left( \frac{\partial y}{\partial \theta} \left( t_i \right) \right)^T \cdot Q_i \cdot \left( \frac{\partial y}{\partial \theta} \left( t_i \right) \right)
+\]</span></p>
+<p>where <span class="math inline">\(Q_i\)</span> is a matrix of weights. In this document, <span class="math inline">\(Q_i\)</span> will be considered as the identity matrix.</p>
+<p>The FIM is relevant for the OED because its inverse is an estimator of the covariance matrix of the error. Hence, an OED can be made by optimizing certain measurements of the FIM. <strong>bioOED</strong> implements two of this criteria: D and modified E. The D-criterion consists on the maximization of the determinant of the FIM. It is equivalent to the minimization of the volume of the confidence ellipsoids. The modified E criterion is based on the minimization of the ratio between the maximum and minimum eigenvalue of the FIM (<span class="math inline">\(\mathrm{abs} \frac{\lambda_{max}}{\lambda_{min}}\)</span>).</p>
+</div>
+<div id="calculation-of-local-sensitivities" class="section level2">
+<h2>Calculation of local sensitivities</h2>
+<p>Local sensitivities (<span class="math inline">\(S_{ij}\)</span>) play a key role on Optimum Experiment Design. These functions quantify that variation of the output variable (<span class="math inline">\(y_i\)</span>) caused by a unitary variation of the model parameter (<span class="math inline">\(\theta_j\)</span>), as described in the following equation. <span class="math display">\[
+    S_{ij} = \frac{\partial y_i}{\partial \theta_j}
+\]</span></p>
+<p>Typically, this derivative cannot be calculated in close form and one has to use numeric methods. <strong>bioOED</strong> uses the function <em>sensFun()</em> from the <strong>FME</strong> package for this purpouse, which approximates the local sensitivity functions using finite differences: <span class="math display">\[
+    S_{ij}(t) \approx
+    \frac{y \left( \theta + \Delta \theta \right) - y \left( \theta \right)}
+    {\Delta \theta}
+\]</span></p>
+<p><strong>bioOED</strong> provides the function <em>sensitivity_inactivation()</em>, which allows to calculate estimate the local sensitivity functions. This function has 8 input arguments:</p>
+<ul>
+<li><em>inactivation_model</em></li>
+<li><em>parms</em></li>
+<li><em>temp_profile</em></li>
+<li><em>parms_fix</em></li>
+<li><em>n_times</em></li>
+<li><em>varscale</em></li>
+<li><em>parscale</em></li>
+<li><em>sensvar</em></li>
+</ul>
+<p>The inactivation model to use for the calculation is defined by the character argument <em>inactivation_model</em>. It must be consistent with the requirements of the function <em>predict_inactivation</em> from the <strong>bioinactivation</strong> package. Refer to the help package of this function for more information.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">inactivation_model &lt;-<span class="st"> &quot;Bigelow&quot;</span></code></pre></div>
+<p>The environmental conditions are defined through the data frame <em>temp_profile</em>. Its columns, named <code>time</code> and <code>temperature</code> must provide discrete values of the temperature profile. Intermediate points will be calculated by linear interpolation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_profile &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">time =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">60</span>),
+                           <span class="dt">temperature =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">60</span>))</code></pre></div>
+<p>The nominal values of the model parameters are provided by the arguments <code>parms</code> and <code>parms_fix</code>. Both arguments follow the same restriction as the equivalent ones for the <em>predict_inactivation()</em> function from the <strong>bioinactivation</strong> package. Note that local sensitivities will be calculated only for those parameters included in the <code>parms</code> argument.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parms_fix &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">temp_ref =</span> <span class="fl">57.5</span>, <span class="dt">N0 =</span> <span class="fl">1e6</span>)
+parms &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">D_R =</span> <span class="fl">3.9</span>,
+           <span class="dt">z =</span> <span class="fl">4.2</span>
+           )</code></pre></div>
+<p>The local sensitivities are estimated at points uniformly distributed between the maximum and minimum values of time provided in the <em>temp_profile</em> argument. The number of points is provided by the integer argument <em>n_times</em> (100 by default).</p>
+<p>The local sensitivities can be scaled using the <em>varscale</em> and <em>parscale</em> input arguments (see the help page of <em>sensFun</em> from the <strong>FME</strong> package). By default, both arguments are set to 1 (i.e. no scaling).</p>
+<p>The argument <code>sensvar</code> allows choosing whether the sensitivity of the microbial count (<span class="math inline">\(N\)</span>) or its decimal logarithm (<span class="math inline">\(\log N\)</span>) with respect to the model parameters will be calculated. By default, the sensitivity of <span class="math inline">\(\log N\)</span> is calculated.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sensitivity &lt;-<span class="st"> </span><span class="kw">sensitivity_inactivation</span>(inactivation_model,
+                                        parms, temp_profile,
+                                        parms_fix)</code></pre></div>
+<p>The <em>sensitivity_inactivation()</em> function provides a data frame of class <code>&quot;sensFun&quot;</code> (defined in the <strong>FME</strong> package). This data frame contains the values estimated of the local sensitivities at each time point with respect to each one of the model variables.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sensitivity)</code></pre></div>
+<pre><code>##           x  var          D_R             z
+## 1 0.0000100 logN 0.000000e+00  0.000000e+00
+## 2 0.6060606 logN 0.000000e+00 -1.691768e-07
+## 3 1.2121212 logN 2.277381e-08 -3.595008e-07
+## 4 1.8181818 logN 4.554761e-08 -5.921189e-07
+## 5 2.4242424 logN 4.554761e-08 -8.881784e-07
+## 6 3.0303030 logN 9.109522e-08 -1.205385e-06</code></pre>
+<p>Moreover, it includes an S3 method for <em>plot()</em> which allows the visualization of the evolution of the local sensitivities through the experiment.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(sensitivity)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="structural-identificability" class="section level2">
+<h2>Structural identificability</h2>
+<p>Some mathematical models may be ill-defined in the sense that different combination of its model parameters may provide the same output. This is defined as structural identificability of the model. It can be calculated as the correlation between the local sensitivity functions with respect to the different functions.</p>
+<p>The <strong>bioOED</strong> package implements the function <em>calculate_pars_correlation()</em> which calculates the correlation between the sensitivity function of the model, providing an indicator of its structural identificability. This function has 6 input arguments:</p>
+<ul>
+<li><em>inactivation_model</em></li>
+<li><em>parms</em></li>
+<li><em>temp_profile</em></li>
+<li><em>parms_fix</em></li>
+<li><em>n_times</em></li>
+<li><em>sensvar</em></li>
+</ul>
+<p>They are defined identically to those defined for <em>sensitivity_inactivation()</em> and will not be repeated here.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parms_fix &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">temp_ref =</span> <span class="fl">57.5</span>)
+parms &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">delta_ref =</span> <span class="fl">3.9</span>, <span class="dt">z =</span> <span class="fl">4.2</span>, <span class="dt">p =</span> <span class="dv">1</span>, <span class="dt">N0 =</span> <span class="fl">1e6</span>)
+temp_profile &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">time =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">60</span>), <span class="dt">temperature =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">60</span>))
+pars_correlation &lt;-<span class="st"> </span><span class="kw">calculate_pars_correlation</span>(<span class="st">&quot;Mafart&quot;</span>, parms,
+                                               temp_profile, parms_fix)</code></pre></div>
+<p><em>calculate_pars_correlation()</em> provides a matrix of class <code>parCorrelation</code> containing the correlation between the sensitivity functions of the model parameters considered.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(pars_correlation)</code></pre></div>
+<pre><code>##             delta_ref           z           p          N0
+## delta_ref  1.00000000  0.03549925 -0.98982135 -0.07864353
+## z          0.03549925  1.00000000 -0.17736312  0.44558859
+## p         -0.98982135 -0.17736312  1.00000000  0.01399121
+## N0        -0.07864353  0.44558859  0.01399121  1.00000000
+## attr(,&quot;class&quot;)
+## [1] &quot;parCorrelation&quot; &quot;matrix&quot;</code></pre>
+<p>This object includes an S3 method for plot, allowing to visualize the results of the calculation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(pars_correlation)</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAwAAAAEgCAIAAACM0IPGAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO3df5DjdZ3n8denuxk9toRb3QOv+DGOk3RJ08eJeBydjLucdQjJ6O7Isl0lVy4LSjK6SqLnWMfeKILjUeWskgwuZ2dc2NE6qOpF7HWPfGfkymJXOj3FiWyxTWN1MoyDUidXwt7oCSd09+f+SDqdfDtJZ5pvfnwmz0d9/+h8v590PgyBvOb9eX++MdZaATjNlbLR8PRkcTYVqj+XLiiSqT89KLxsdHF0NhWTVP6zWNhrpxo9GjDlt0WDd4WXNPGcJEUimb2rf3CAu4Z6PQEAXRDaORkppMNJr/50JJMv7t3Zmyn1Wizl+xCfXyxJlQCgzJi8xs873YVSs8VMpJAOR7OluguxKVs2S/rBaWGk1xMA0A2h1Gx+wcTjRvlyZaOUvSGtyWIsNIDFn/VCo+OSqulnMGtiVaHUbFHRcDoc1YD/SeC0ZlgCAwZHdRVDkhL5AV3kacRLmvh8JFIoDHz6qWq6FgacHlgCAwZIdRXDWkv68SP91Gm6FuaGUjZq/Eu+QC0CEAAoNpXPkH78VjPQDc5FIC8ZThd6PQn0OZbAAACnj8rSXSKhnAZ1Kx/aQgUIAHAaGd1btHZ2z1iv54F+xy4woCP+dOhtvZ5CP7r72Yd6PYV+tHLhO3s9hT41MlT5W7oxpsWw2qWMUIyiD9pCAAIAOOCMd97oO/PaP9xHFwc2jQAEAHCAGRru9RRwWqEHCAAADBwqQAAAB5hhPrAQJN5PAAAHDBGAECjeTwAAB5ihU/nACqVmaY9GS/QAAQCAgUMFCADggKFhdoEhSAQgAIADaIJGsFgCAwAAA4dADQBwwKk1QQMb4f0EAHAA2+ARLN5PAAAHGJqgESh6gAAAwMChAgQAcABLYAgW7ycAgANogkawWAIDAAADh0ANAHAAN0JEsHg/AQAcwFdhIFgEIACAA+gBQrDoAQIAAAOHQA0AcADb4BEs3k8AAAfQBI1gsQQGAHBaKRs1xhhjkl7r6yaaLXV5buhfBCAAgAPM8IjvKJ/3kuH0eN5am0/k4g0iUPW6LWaUDjcJSRg8BCAAgAOGhoZ9hyTJm8lFMntikmJ7MpHcjD/flBbnldgVk6RQam9C84sUgSCJAAQAcELjClBpcV7joyFJUmh0fH2+Ce2crMYibyYXmdwZ6u680a8IQAAAV5lwuqBcyyGh1GxxbJ8xxph9Y8XZFPkHZQQgAIADhoZHfIckW8xElGj5PC9pwtOTRWttcXI63KxRGoOHAAQAcIAZMr6jraeVFueV2JsKiR4g1CMAAQCcVdv3U9sPBGyEAAQAcMDQkPEdkqTYrkQhvd+T5O1PFyr7vWqEdk5GcvuyJUml7L4cCQmruLEmAMABQ8ON17xiU/mEiZucpETeVvKPl6x2PIdShzLT4bBJS4pkilP+hIRBRQACADhgqGnTT2zK2ql1p9aCTig1a1OdmxgcxRIYAAAYOFSAAAAOaHfbF9AeAhAAwAFDQyxZIEi8nwAAwMChAgQAcECzXWDA5hCAAAAOoAcIwSIAAQAc0HwbPLAZ9AABjrMv3WNPlI+/s01HnVgdc4/9X0/Zdi+57dEvDW+7rHzsfnSDsYf/7LLhbZftuO+n60+WD98l9xzefcbwcPn42OHNDzu8e/iM4eHfPXCsYxMFuoQABLjMvnSPflV99LQaZSC79JQ98fDa41cf02rQaXHJdY9+afjGh6qPDt7YMgM9+qWdD/jPHbvvxtqTc3fscjgDHd59xs6D1Uff2NkkA2047PDuDxxUrzT5KgxgkwhAQBtK2aiJZr1s1FREs33wjdJ26Sn9StJbdd7Hzdb/oC2SntYvT/oTzC8fk6QtO7R1ddirj1WGtbjktJ8euPshSROfn1k+/sTi5y+RdPDu+xtWLQ7/2WW1UWnV7P47nvL9hrk7vtmidNLHjh3Yd1DSxF2Lry0vP3PXhKRv7Duw7h28wbDDu4dr41H3mWHjO3o4GZwGCEBAmwrpeHo8b621Np8opMNJr9cz0sslSdoS0oiks/Vbb5Wkpf9TP+ikfiNJ+q2tkqSzdfbFq8NaXHLbiR9M/0jSJZPvvUDS9vdeNSHpR8eL/nE/PfCHl+18QNIlE+9q+Ivqf4Ojjj384Jykiet2bpcU2jk5IWluwR+AWg07dmDH8AcOSpqYcPgPAqhDAALatfY9irGpYmb1C6Z77w1nV34YeYsk/eZkW89qMazN39D/QqPlZLd167gklRZPNBg08fmZ5eN3TPpPXzj2LklPTX//p5KOff+ROUnv2hbu4Gw7bXx0uyRp++jFkjS/2LiNp+mwibsWX1s+dF2np9kcS2AIFgEIaNf4aKj6c2h0XIXph3ucgJZ+3uDkq/9U//hsvUGS9Ovyp/9JnXx6dViLS247fnyuwdmnFo77zlxwy7efeOzGCxr9igtu+faBm6W5O3YNb7ts9I6npGsf/vb124Ofa+cVFxr9acw9U2x/2PZbHlv++1t6/E8/tE5v5wPX8QYC2hQZc/Wv/2ftkKRXH9OJe+yJ/6ZX27s08B59tL7h5aGZR3szEZRRAUKwCECAO+wvH1rbsv7Lkxp5a4NBW37bd8KMXGK27lx7/Ns7qsNaXHLLift3rO5XH/7D+49t29aoU+WSsW3t/8bZ3Tc+JOnm+55YPv7E8n3XSjp445ecbIIOjzX605i4KLypYcDpggAEtKluxcubySkyuTPUYnzXVFt2ll6UalqC6mw1Wz9ePjTyT/XDWlxy3GrTz4kT89JaS1A7KuWfa3ddKUm68sqbJceLQKvdPMcWn5bWen02OawH2AWGYBGAgHYV0jdU2p69ZDynxN5Ut/OPOevaalgxZ52tM0OS9GpJS5JO6tc/l6SRf+57VqVuVLnBz2qjzxu3mpaX3LL1+seOP7FcPr59/fat75l8nS3MlRrSauKp5KFTqiH1je07r5uQNPfgw8cklR6enpM0MeZ/97Y5rHdYAkOwCEBAuxKZyemwMcaYeC6Rt5UdYT1kRi7RmyT9XM9XO3gu1lln+5NNJSfVNPps2aEzpdaXnHbBLZ+8VnUtzLr5k9dvV3Wx7MYDjXaEralEKB288bLhbas3CvrQR29pv4bUR7bfsvdmSXOfGj1jePiiT81J+ujeW0KSjh343eHhM4Z3HDjWcli/K63eoavZvSmqA/rjDl7oDwQgoG2jqVlb0fv0U2be/HG9qfroYm39vfV/KzYjl+i8HWuP37RT//ISs9El1135n8uNO2U33/fE1688pedfcMu3n3j4QzUnPnRg+b9Eg5lb913z9dcevrn66KMPL//Xa17HsB5pVgHykuHyHbryiVy8UQTykuG0MkVrbTGjah0XA89Y6/w9X4GOK2Wj4fT4qVR9/nTobR2cj7Pufnb9PZehlQvf2esp9KmR1b3uxpjf++qjvqt/9+krrc0nzb6x4mwqVP7vdGGv/z9Tb20AUIMKEADAAUPDQ75DkkqL89VbdIVGxzW/6Cvw1A4AahCAgDaEUrP9s+wFYJUJpwvKtRpRXChExrRRlxAGEAEIAOCAhj1AtpiJKLHBMwvpfTpkK11CtEGjYqTXEwAAYGMjm77xTyRzqNwBFNuTiYQXihIrYqACBABwWG3fT8N2n/BYpLBQbPBMDDoCEADAASNDxndIkmK7EoX0fk+Stz9dSOzyt+qFUnsTuX3lda/GIzCgWAIDADhgZLjx39hjU/mEiZucpETeVtJN7d732FRxMRo2adWNwMAjAAEAHDDS9LsvYlPWTq07VRN0QqlZm+rYxOAolsAAAMDAoQIEAHBAsyUwYHMIQAAABzRfAgM2g0ANAAAGDhUgAIADNn8jRKARAhAAwAHVb4YHAkEAAgA4gAoQgkWgBgAAA4cKEADAAewCQ7AIQAAAB3AfIASL9xMAABg4VIAAAA5gCQzBIgABABzALjAEiwAEAHAA9wFCsHg/AQCAgUMFCADgAJbAECwCEADAATRBI1gsgQEAnFbKRo0xxpikt8GolgMwYAhAAAAHjAwP+Y7yeS8ZTo/nrbX5RC7ePOF4+9OFbk0VTiAAAQAcMDJkfIckyZvJRTJ7YpJiezKR3EzjBOQl4/ORSBdni/5HAAIAOKBxBai0OK/x0ZAkKTQ6rvnF0vqnlrL7lD802dXpou8RgAAArjLhdEG51mNK2RumJ/fEujMhuINdYAAABww32gVmi5loeKHl87z905OHZkNqUBnCQCMAAQAcsLlt8F4yrr02FPhs4D6WwAAAzqrt+6ntB6rwZnLKxY0xprxYFt9grzwGCAEIAOCAYWN8hyQptitRSO/3VN7onthV3+sTm7KripmIEnlrp+gGgiSWwAAAThhu8hf22FQ+YeImJymRt5V04yXNvrHibIq1LzRFAAIAOGC15LNebMraqXWn/IWeUGrWdmJecBVLYAAAYOBQAQIAOKDhNnhg0whAALrnN+f9615PoR+98f/+otdT6FdnnVP9kQCEYBGAgI74i5Wf9HoK/eiV15Z7PQUAkAhAAAAnjDRtggY2gwAEAHAAS2AIFgEIAOCA5tvggc1gGzwAABg4VIAAAA5gCQzBIgABABxAAEKwWAIDAAADhwoQAMABNEEjWAQgAIADRlgCQ6AIQAAABwyTfxAoeoAAAMDAoQIEAHAAu8AQLAIQAMABBCAEiyUwAIDTStmoMcYYk/RaX286AoOIAAQAcMCwMb6jfN5LhtPjeWttPpGLNwg41evlEdFsqcsTR58iAAEAHDA8ZHyHJMmbyUUye2KSYnsykdyMPwGtXS+PKCwUuztv9CsCEADAASNDxndIUmlxXuOjIUlSaHRc84u+Ak9sys6mQpUHxYVCN6eMvkYTNADAVSacliRNtTO4lN2Xi2SKsY7OCM4gAAEAHDDU6KswbDETDS+08/RSNhpOj+dttRqEQUcAAgA44PV8F1gpGw2nlSlOUf1BFT1AAABn1fb91PYD1Vit/cxS/EEtY63t9RwADIpXXlvu9RT60RtfebHXU+hT5qxzKj8Ys/Dzk76rY28921rrJU1ceTsVq/5QN6iUjYanJ4ukH/hRAQIAOGDIGN9RPh+byidycWNMPJfIr6YfL2nKN/zx9qcLKqTDxnAvRNSjAgSge6gANUQFqJnaClDxf//KdzV8zpv4CMOmUQECAAADh11gAAAHDPFlqAgUAQgA4ADyD4LFEhgAABg4VIAAAA54PTdCBNYjAAEAHNDwqzCATSMAAQAcQBM0gkUPEAAAGDhUgAAADhimAIRAEYAAAA6gBwjBYgkMAAAMHCpAAAAH0ASNYBGAAAAOYAkMwSIAAQAcQBM0gkUPEAAAGDgEIMA1XtKYaLa08aCkV/mx8kPnlbJRY4xpY37AqRoaMr6j1zOC2whAwOnNS8ZzXXut/elCJFO01s6mQt160XUOf+zMLSPl4xOHX88w7xNbRs7c8p6vnWZZ7pHPDJ19bvnY/chmhnmpc6uXovcc7/B01wwZ4zu69tI4LRGAAARpfLR30UfS4Y+d+fsHq4/u/f0m4aaNYd/7+Afu7cQMe+uRzwxd963qo9x1TTJQ82HH7tm586/WBs7dekXXMtCwMb6jycBqIbJrpU84iQAEOKD6f3RjotnFZpfWLTwtZqMmnpNy8bVrXrI6vM3PBy9potlssvYZDV60VPNaPfvgKX3tzoOSrvjKj19+dekfvzIh6d47DxzbxLDDH9v1je7MuZuOZ7/8LUkTdx5dOflC8c53S8p9Obfuz6fFsO/vv/WHvktzt/5FX+UMLxlOj+ettflELk4EQnMEIKDfeUlT+T+6tTY/nk6vLWmVstFwWpmitdbaYkbpcF0GGk3N2nxCSuQri1Je0sRV+U3FTCQXb7NXp5CeHitaa+1UrNmLhmpey07FAv9TaEcp/9CcpIlrYyFJ22N/dIWkuWf8H/AbD6skpNPNs49MPy7p3ZPXbJO0/Zo/mJD0+OLiKQ+rv9QtQ0P+oxFvJhfJ7IlJiu3JRHIzJCA0QwAC+lspuy+nRH41UsSm8onqtXLPzaFKv00oNZtPFNL7m/8ff+2zQVJo52REhYViW7OITO5cXdk61RftvtVVuFB4TJLmFxuHvKbDjt1942fndMVXvnpTp2faGxeNvl2S9PbQv5KkZxafbX/Ytosul/TD6cPHJR07/Ddzki4fHe34nKU2e4BKi/Nr/2ZHx5v+2wcIQECfKy4UlNhVU1GJ7VpNQN5MrjaZSAqPRdTi77yxqWp3spc04XSh7Vmsdfac8ot2UemZow3Ozv24dCrDSgdu/o9zmvjqwU+GA59gjx1bnGtw9of+ElmrYdtSjzyQkOZuvWLo7HPDt/5Q+vDDjyS2d2CybSqvw/bu9eEwAhDQ10qL8y2vF9LhtZ6eDTPNWu9OXPliJrLJSZ3aizql9LWPfPqodNOtt/TwQ72vPZKv31X4rb9psZUsUEbWd0gqr+d2aQY4vRCAgL4WGh1veT1S6cWp0bQBp5S9IV1I5DcY1YZTedFuCl10RYOzE+8ItT3s8Fc+Oyd99G+/dk0n5td1z+aiq/vVh67KHds+2qhl590X+bJeq2Hf333dtyQlHnxh5eQLKw9+WFLuus90qfy3suw/gNeBAAT0t3ULTGs1odiuRNtNPNK61bTiwmYqN6f6oj2w2vZRKi5IzTfmNxj2ve8elKRvfODMLSNnbilvg5/77NjImR/vhxW+oKw2/Txb+kdprdennWGV8s+H/+AqSdJV8YTUvSJQOwGotu+nth8IWIcABPS3UOpQ7XYtL1mz4hTbU7+Ty0s2vglz5QOhLktVbpB46j2i7b5oD4Ti105ImnvIK0k65v31UUkT/gJHu8NOA29PzJ58YaV8PJLY/varJttpYW4xrFIcWk08lTy0robUS7Fdq0353v50oa59DqjnL2QD6D817TqRTCZRuwhV38mzusC1tiPdVnaNRTJF3+8pli81WM+qt/arGs2n8Ys28/KrS509vnuz739xN3136eVXl15e+OoVkjTx5YWWw+qOv72p9imdPFaqMaXTx4Mf9v2DVxaznvzihCS9+64nWw47efSuy9d9ivzJA52bcPWdI2nl//3adzT5CKtulGz9ZsSgM5b2MQDd8sprne/bqLnL803fXap085QOvHfs00c18eWFH3wi1HxYHe8TWz5wb+1TOuaNr7zY2ReoVXOX58SDL3y9vJj1bC566efm9O67nnw49fbmwyRJXurctZtB/8kDK9n3dm6y5qxzKj8Ys/LyL31Xh848i48wbBoBCED3dCMAOairAcgpBCB0Dj1AwMCr/WILv/5o7gEk2WX/AbwOVIAAdA8VoIaoADVTVwH61S98V4fe9Dt8hGHTRno9AQAA2sCNfxAolsAAAMDAoQIEAHDBykqvZ4DTCgEIAOAClsAQKJbAAADAwKECBABwgGXfOwJFAAIAuIAlMASKAAQAcAEBCIGiBwgAAAwcKkAAABewDR6BIgABAFzAEhgCxRIYAAAYOFSAAAAuoAKEQBGAAAAu4D5ACBRLYAAAF6ws+486pWzUGGOMSXoNn1693nQEBgsBCADgPC8ZTo/nrbX5RC7eIOBUr5dHRLOlHkwSfYUABABwQasKkDeTi2T2xCTF9mQiuRl/Alq7Xh5RWCh2a9roVwQgAIALVlb8R1VpcV7joyFJUmh0XPOLvgJPbMrOpkKVB8WFQndmjL5GAAIAuKrc03NKTyll961VgzDACEAAAAfYlSXfIclaa61t/5eUstFwejy/Vg3C4CIAAQBcsLxce5T+arfKFaC293SVstFwWpniFNUfiAAEAHCCXV6qPbZfn1W5AjQVq+v7qe0HqlGp/ViKP6ggAAEAXBfblSik93uSvP3pQmKXv8ZTyt5A7Qf1CEAAABe0vBFibCqfyMWNMfFcIr+ac7ykKd/wx9ufLqiQDhvDvRCxypxS+xgAvB6vvMa3GTTwxlde7PUU+pQ565zKD8a8+iN/ZtnyrhgfYdg0KkAAAGDg8GWoAAAXLC/1egY4rRCAAAAu8H/7KfC6EIAAAA6wVIAQKHqAAADAwKECBABwwTJLYAgSAQgA4ACWwBAslsAAAMDAoQIEAHABu8AQKAIQAMABLIEhWAQgAIALaIJGoAhAANBjtx99qddT6FNfeN85vZ4CTlsEIADd88/OGO71FOAqu8ISGIJEAAIAuIAlMASKbfAAAGDgUAECADiAXWAIFgEIAOAClsAQKJbAAAAuWFnyH3VK2agxxhiT9Fr8klI22noABgYBCADgPC8ZTo/nrbX5RC7ePOF4+9OFbk4LfYwABABwgF1e9h01F72ZXCSzJyYpticTyc00TkBeMj4fiXRltuh/BCAAgAuWl/1HVWlxXuOjIUlSaHRc84ul9c8vZfcpf2iyS7NF3yMAAQBcVe76aWdkKXvD9OSeWKcnBHcQgAAADlhZXvYdkqy11to2nu3tn548lAp1epJwCNvgAQAOqG/60bOP3CfJGKNE3u7Z4LleMq69lviDWlSAAAAOWFlarj3e9u/+WOUK0FSsru+nth+owpvJKRc3xhgTTheUi2+wVx4DgQAEAHBdbFeikN7vqbzRPbGrvtcnNmVXFTMRJfLWTtENNPBYAgMAOMAur7S4GpvKJ0zc5CQl8raSbryk2TdWnKX1B40QgAAADlhZav1VGLEpa6fWnfIXekKp2XZ6pjEAWAIDAAADhwoQAMABli9DRaAIQAAAB6wsteoBAk4VAQgA4AAqQAgWPUAAAGDgUAECADhgo11gwKkhAAEAHND6PkDAqWIJDAAADBwqQAAAB7AEhmARgAAADmAXGIJFAAIAOID7ACFY9AABAICBQwUIAOAAlsAQLAIQAMABKwQgBIolMAAAMHCoAAEAHGBpgkagCEAAAAewBIZgsQQGAHCAXVr2HfXXS9moMcYYk/Qa/4LqABPNljo/X/Q7AhAAwHleMpwez1tr84lcvFEE8pLhtDJFa20xo/QNRCCwBAYAcMBKqy9D9WZykUwxJim2JxMJz3hTsViDAamQpFBq1qY6OlU4gQoQAMABrZbASovzGh8NSZJCo+OaX/QVeGoHAJIIQAAAd5V7ejYeV1woRMa0UZcQBgoBCADggJXlFd8hyVprrW3r+YX0Ph2ylS4h2qBBAAIAuGBlaaX2+MnTBZUrQG3WcyKZQ6mQVO4SKiwUOzlXuIAABABwwMqSrT3O3/5vVa4ATcXq+n4atvuEx8g88DHtFg8BAJ3xhe/9uOOv8fhtt39uuvzjZV985v2Xtx79g/9+deIJXXr1vfdfcV75zHNHP3X1kYXaMZPXH7k93Imp1vjC+95R/sEY8w9/dI3v6jv/+nD1I8xLmrjydipW/cE32EuafWPF2VRIzUZgwLANHgBOdzXpR9ITn7tILTNQMZt4wn/uxC8WGg3tIttqG7xiU/mEiZucpETeVrLNWuiRYlPFxWjYpFU3AgOMAAQAHVHKRsPpQu2ZSKbyYdxdzx19YFrS+buPfOSDF770nevv/vqTTzzwzcjlf/zmhsMfv+3+/LqTzx9/QdLYrZ+8q8mzOm9lg+8Ci01ZO7XuVE3Q4f4/qEMPEAB0RCg1a1cVMxEpsbcH6Ud6/tGnFyRdevHlF0p68+XXnC9p4diLjUdX0pLPS48f/pmkt23rVfoBAkcAAoAOK2VvSBcS+d42nYTfUu7mOW/buZJUfPH5BoNe+s5/OrKg83ffeln9+Refe1KS8onbr77o9qsvuj37g85OtpGVZes7uj8HnE4IQADQUaXsDelCJLOnV/Hn+WM/a3D2yV+sD0DPf/M7X39SY7d+8IPb6i889+JP6k/kE7d/6psvBTbFtvi2wW+0IgZsgAAEAB1UiT+HerL6dUqeO/rnd/5MuuxD67t8yh3Ql1597zO3HXnmti9OStLCnYXHuzo/AhCCRRM0AHRMJf4Uexl/ztt+vrSuCHTp75xXf+LxvzyyIMVzjXaHvef9R555f/XR5R+5emz6yIJeeP456cLA5wt0BwEIADqkH+JPVfHF5xU+b3U/V7UlqHp5blqS8onb17aAPXnkpouOxHO3TfyP2z83vf7GP+ee19X003obPHCqWAIDgI7ol8Wv8668eEzSk08//pyq+7nGtr+l/d9w+b+/TJKm//47z0mrtaL1NaQO890JemWJJmi8LtwJGgA6Yf1tgCQp0egOxB2/E3T9jRBVvRn089/8y5vu/FndHZ/L/HeCLt89qO53xnO3pd7T2WnX3wn6sR07fFd3PPYYH2HYNCpAANAJtbcBWtObrfCX317pXJbU1ldh+L35g/d/cvel1Yfn7z7ShfTjQxM0gkUFCAB6rBvfBeam2grQo//mCt/VK//nUT7CsGk0QQMAHEDTD4LFEhgAABg4VIAAAA5gGzyCRQACADiArmcEiyUwAAAwcKgAAQAcQBM0gkUAAgA4YIUeIASKJTAAgAM2uhFiKRs1xhhjkl7D51evm2i21IX5ot8RgAAAzvOS4fR43lqbT+TiDSJQ9botZpQONwlJGCQEIACAA1pWgLyZXCSzJyYpticTyc34801pcV6JXTFJCqX2JjS/SBFo4BGAAAAOsMvWd6xdKy3Oa3w0JEkKjY6vzzehnZPVWOTN5CKTO0Pdmjf6FQEIAOCqclNPGwNDqdni2D5jjDH7xoqzKfIPCEAAAAcsrVjfIcla2973oXpJE56eLFpri5PT4WaN0hgkBCAAgAOWrK09fvbKT1SuALUTZkqL80rsTYVEDxBWcR8gAIADlusLPf/iDVv1q2eq5Z9xTS+WFAtV+oF2scSFjVABAgC4LrYrUUjv9yR5+9OFyn6vGqGdk5HcvmxJUim7L1ftmMYAowIEAHDAUsten9hUPmHiJicpkbeV/OMlqx3PodShzHQ4bNKSIpnilD8hYfCY9trHAACd8oXv/bjXU+hTX3jfO8o/GGPue/M7fFdvfOnHfIRh01gCAwAAA4clMACAA8r73oGgEIAAAA5o3WMGPe0AAADeSURBVAMEnCoCEADAAcvkHwSKHiAAADBwqAABABzAEhiCRQACADhgifyDQLEEBgAABg4VIACAA9gGj2ARgAAADlimBwiBIgABABxADxCCRQ8QAAAYOFSAAAAOYBs8gkUAAgA4gCUwBIslMAAAMHCoAAEAHLDMNngEigAEAHAAPUAIFktgAAAHLFn/sbFSNmqSXsenBicRgAAApyUvGU4Xej0J9C0CEADAAUvW+o4Wg0vZqDHx+UQi0rX5wTX0AAEAHHCPPbH+pDFGkl0fhkb3Fm0sVMpGcwtdmBtc9P8Bpw7XdUpQYJQAAAAASUVORK5CYII=" /><!-- --></p>
+</div>
+<div id="optimization-of-the-reference-temperature" class="section level2">
+<h2>Optimization of the reference temperature</h2>
+<p>The reference temperature can have a significant influence in the structural identificability of the model (Dolan and Mishra, 2013). The function <em>optimize_refTemp()</em> is able to calculate the reference temperature which optimizes the structural identificability of the model for a given set of nominal parameters and environmental conditions. This function has 8 input arguments:</p>
+<ul>
+<li><em>temp_ref0</em></li>
+<li><em>lower</em></li>
+<li><em>upper</em></li>
+<li><em>inactivation_model</em></li>
+<li><em>parms</em></li>
+<li><em>temp_profile</em></li>
+<li><em>parms_fix</em></li>
+<li><em>n_times</em></li>
+</ul>
+<p>The optimization is performed using the Brent method implemented in the <em>optim()</em> function from the <strong>stats</strong> package. The numeric argument <em>temp_ref0</em> provides an initial guess for the optimization. Moreover, lower and upper bounds for the optimization are provided by the numeric arguments <em>lower</em> and <em>upper</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_ref0 &lt;-<span class="st"> </span><span class="dv">57</span>
+lower &lt;-<span class="st"> </span><span class="dv">50</span>
+upper &lt;-<span class="st"> </span><span class="dv">70</span></code></pre></div>
+<p>The inactivation model to use for the calculation is defined through the argument <em>inactivation_model</em>. This argument has to be compatible with the equivalent one for the <em>predict_inactivation()</em> function from the <strong>bioinactivation</strong> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">inactivation_model &lt;-<span class="st"> &quot;Mafart&quot;</span></code></pre></div>
+<p>The conditions of the experiment are defined through the <em>temp_profile</em> argument. It must be a data frame with columns named <code>time</code> and <code>temperature</code> providing discrete values of the temperature profile. Intermediate values are calculated by linear interpolation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_profile &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">time =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">60</span>),
+                           <span class="dt">temperature =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">60</span>))</code></pre></div>
+<p>The nominal values of the model parameters are provided using the <code>parms</code> and <code>parms_fix</code> arguments. Both must be compatible with the requirements of the equivalent arguments for the <em>predict_inactivation()</em> function from the <strong>bioinactivation</strong> package. The parameters included in <code>parms_fix</code> will not be included in the calculation of the local sensitivities. Therefore, it is recommended to include in this argument those parameters which are known before performing the experiment. The D-value at the reference temperature (or <span class="math inline">\(\delta\)</span>) and the z-value must be included in <code>parms</code> (i.e. cannot be fixed.)</p>
+<p>Note that the D-value at the reference temperature (or <span class="math inline">\(\delta\)</span>) depend on the reference temperature. Hence, the value provided in <code>parms</code> must be the one corresponding to the reference temperature provided in <code>temp_ref0</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parms &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">delta_ref =</span> <span class="fl">3.9</span>, <span class="dt">z =</span> <span class="fl">4.2</span>, <span class="dt">p =</span> <span class="dv">1</span>, <span class="dt">N0 =</span> <span class="fl">1e6</span>)
+parms_fix &lt;-<span class="st"> </span><span class="kw">c</span>()</code></pre></div>
+<p>The local sensitivities are estimated at a uniformly distributed time points. The number of time points used for the calculation is defined through the <code>n_times</code> argument. By default, it is set to 100.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">optim_refTemp &lt;-<span class="st"> </span><span class="kw">optimize_refTemp</span>(temp_ref0, lower, upper,
+                                  inactivation_model, parms, temp_profile,
+                                  parms_fix)</code></pre></div>
+<p><em>optimize_refTemp()</em> returns the object generated by the <em>optim()</em> function. The calculated optimum value of the reference temperature can be accessed in the <code>par</code> entry of this object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(optim_refTemp$par)</code></pre></div>
+<pre><code>## [1] 57.77658</code></pre>
+<p>The convergence of the optimization algorithm should be checked in the <code>convergence</code> entry. If its value is different from 0, convergence was not achieved.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(optim_refTemp$convergence)</code></pre></div>
+<pre><code>## [1] 0</code></pre>
+</div>
+<div id="optimum-experiment-design-of-microbial-inactivation" class="section level2">
+<h2>Optimum experiment design of microbial inactivation</h2>
+<p>The function <em>inactivation_OED()</em> is able to generate an optimum experiment design based on the FIM for a microbial inactivation experiment. This function has 10 input arguments:</p>
+<ul>
+<li><em>inactivation_model</em></li>
+<li><em>parms</em></li>
+<li><em>temp_profile</em></li>
+<li><em>parms_fix</em></li>
+<li><em>n_points</em></li>
+<li><em>criteria</em></li>
+<li><em>n_times</em></li>
+<li><em>sensvar</em></li>
+<li><em>optim_algorithm</em></li>
+<li><em>opts_global</em></li>
+</ul>
+<p>The inactivation model to use for the calculation is defined by the input argument <em>inactivation_model</em>. It must be compatible with the <em>predict_inactivation()</em> function from the <strong>bioinactivation</strong> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">inactivation_model &lt;-<span class="st"> &quot;Mafart&quot;</span></code></pre></div>
+<p>The nominal values of the model parameters are provided by the arguments <code>pars</code> and <code>parms_fix</code>. Note that local sensitivities will only be calculated for the model parameters included in <code>pars</code>. Hence, those included in <code>parms_fix</code> will not be considered for the OED. They also must be compatible with <em>predict_inactivation()</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parms_fix &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">temp_ref =</span> <span class="fl">57.5</span>)
+parms &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">delta_ref =</span> <span class="fl">3.9</span>,
+           <span class="dt">z =</span> <span class="fl">4.2</span>,
+           <span class="dt">p =</span> <span class="dv">1</span>,
+           <span class="dt">N0 =</span> <span class="fl">1e6</span>
+           )</code></pre></div>
+<p>The conditions of the experiment are defined through the input argument <code>temp_profile</code>. It must be a data frame which provides discrete values of <code>time</code> and <code>temperature</code>. Intermediate values will be calculated by linear interpolation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">temp_profile &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">time =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">60</span>), <span class="dt">temperature =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">60</span>))</code></pre></div>
+<p>The number of measurements to be taken during the experiment are defined by the argument <code>n_points</code>. It must be an integer greater than 0.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n_points &lt;-<span class="st"> </span><span class="dv">5</span></code></pre></div>
+<p>The criteria for the OED is defined by the argument <code>criteria</code>. It must be a character with the value <code>&quot;D&quot;</code> or <code>&quot;E-mod&quot;</code>. By default, the D-criterion is set.</p>
+<p>The local sensitivity functions are calculated at a set of discrete uniformly distributed time points. The number of points to use is defined by the argument <code>n_times</code> (100 by default).</p>
+<p>The variable to target for the OED is set by the argument <code>sensvar</code>. It must be a character equal to <code>&quot;logN&quot;</code> (default) or <code>&quot;N&quot;</code>.</p>
+<p>The OED can be generated using either a local or a global optimization algorithm. The selection is made using the argument <code>optim_algorithm</code>. In case it equals <code>&quot;global&quot;</code> (default) a global optimization algorithm is used. The local algorithm is used when this arguments equals <code>&quot;local&quot;</code>.</p>
+<p>The global optimization algorithm used is the MEIGO algorithm from the <strong>MEIGOR</strong> package (Egea et al., 2012). By default, a global solver with a maximum of 50000 function evaluations and printout on every step is selected. This can be changed through the <code>opts_global</code> argument. For information regarding the format of this argument, refer to the help page of the <em>MEIGO()</em> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">opts_global &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">maxeval=</span><span class="dv">1000</span>,  <span class="dt">local_solver=</span><span class="dv">0</span>,
+                    <span class="dt">local_finish=</span><span class="st">&quot;DHC&quot;</span>, <span class="dt">local_iterprint=</span><span class="dv">1</span>)
+
+global_OED &lt;-<span class="st"> </span><span class="kw">inactivation_OED</span>(inactivation_model, parms, temp_profile,
+                               parms_fix, n_points, <span class="dt">criteria =</span> <span class="st">&quot;D&quot;</span>,
+                               <span class="dt">opts_global =</span> opts_global)</code></pre></div>
+<pre><code>## [1] &quot;eSS R2014A - Enhanced Scatter Search&quot;
+## 
+##  ------------------------------------------------------------------------------ 
+##  essR - Enhanced Scatter Search in R 
+## &lt;c&gt; IIM-CSIC, Vigo, Spain -  email: gingproc@iim.csic.es 
+## ------------------------------------------------------------------------------ 
+## 
+## Number of diverse solutions automatically calculated: 50 
+## Initial Pop: NFunEvals: 55 Bestf: -4.475781e-20 CPUTime: 0.1 Mean: -5.707515e-21 
+## Iteration: 1 NFunEvals: 126 Bestf: -4.347672e-19 CPUTime: 0.26 Mean: -8.503427e-20 
+## Iteration: 2 NFunEvals: 192 Bestf: -4.347672e-19 CPUTime: 0.49 Mean: -1.788607e-19 
+## Iteration: 3 NFunEvals: 258 Bestf: -4.831391e-19 CPUTime: 0.63 Mean: -2.703823e-19 
+## Iteration: 4 NFunEvals: 325 Bestf: -4.939554e-19 CPUTime: 0.76 Mean: -3.66331e-19 
+## Iteration: 5 NFunEvals: 394 Bestf: -5.010932e-19 CPUTime: 0.9 Mean: -3.920621e-19 
+## Iteration: 6 NFunEvals: 459 Bestf: -5.055889e-19 CPUTime: 1.04 Mean: -4.35925e-19 
+## Iteration: 7 NFunEvals: 529 Bestf: -5.063858e-19 CPUTime: 1.18 Mean: -4.435902e-19 
+## Iteration: 8 NFunEvals: 590 Bestf: -5.071754e-19 CPUTime: 1.34 Mean: -4.440748e-19 
+## Iteration: 9 NFunEvals: 655 Bestf: -5.085303e-19 CPUTime: 1.48 Mean: -4.446696e-19 
+## Iteration: 10 NFunEvals: 723 Bestf: -5.085303e-19 CPUTime: 1.6 Mean: -4.448846e-19 
+## Iteration: 11 NFunEvals: 785 Bestf: -5.085303e-19 CPUTime: 1.77 Mean: -4.450411e-19 
+## Iteration: 12 NFunEvals: 844 Bestf: -5.087756e-19 CPUTime: 1.9 Mean: -4.452357e-19 
+## Iteration: 13 NFunEvals: 906 Bestf: -5.087756e-19 CPUTime: 2.04 Mean: -4.514791e-19 
+## Iteration: 14 NFunEvals: 973 Bestf: -5.090129e-19 CPUTime: 2.16 Mean: -4.515181e-19 
+## Iteration: 15 NFunEvals: 1035 Bestf: -5.090129e-19 CPUTime: 2.37 Mean: -4.515406e-19 
+## 
+## Final local refinement:  DHC 
+## Initial point function value:  -5.090129e-19 
+## NEvals: 8 Bestf: -5.090484e-19 
+## NEvals: 18 Bestf: -5.093205e-19 
+## NEvals: 30 Bestf: -5.093284e-19 
+## NEvals: 42 Bestf: -5.093294e-19 
+## NEvals: 46 Bestf: -5.093314e-19 
+## NEvals: 55 Bestf: -5.093557e-19 
+## NEvals: 60 Bestf: -5.093562e-19 
+## NEvals: 72 Bestf: -5.093563e-19 
+## NEvals: 74 Bestf: -5.093564e-19 
+## NEvals: 79 Bestf: -5.093614e-19 
+## NEvals: 87 Bestf: -5.093614e-19 
+## NEvals: 94 Bestf: -5.093717e-19 
+## NEvals: 97 Bestf: -5.093765e-19 
+## NEvals: 110 Bestf: -5.093767e-19 
+## NEvals: 112 Bestf: -5.093772e-19 
+## NEvals: 113 Bestf: -5.093776e-19 
+## NEvals: 115 Bestf: -5.093776e-19 
+## NEvals: 125 Bestf: -5.093778e-19 
+## NEvals: 130 Bestf: -5.093778e-19 
+## NEvals: 133 Bestf: -5.093778e-19 
+## NEvals: 142 Bestf: -5.09378e-19 
+## NEvals: 148 Bestf: -5.09378e-19 
+## NEvals: 154 Bestf: -5.093787e-19 
+## NEvals: 159 Bestf: -5.093787e-19 
+## NEvals: 170 Bestf: -5.093787e-19 
+## NEvals: 174 Bestf: -5.093787e-19 
+## NEvals: 178 Bestf: -5.093787e-19 
+## NEvals: 189 Bestf: -5.093787e-19 
+## NEvals: 191 Bestf: -5.093787e-19 
+## NEvals: 196 Bestf: -5.093788e-19 
+## NEvals: 205 Bestf: -5.093789e-19 
+## NEvals: 207 Bestf: -5.093789e-19 
+## NEvals: 214 Bestf: -5.093789e-19 
+## NEvals: 220 Bestf: -5.093789e-19 
+## NEvals: 225 Bestf: -5.09379e-19 
+## NEvals: 232 Bestf: -5.09379e-19 
+## NEvals: 242 Bestf: -5.09379e-19 
+## NEvals: 244 Bestf: -5.09379e-19 
+## NEvals: 249 Bestf: -5.09379e-19 
+## NEvals: 256 Bestf: -5.09379e-19 
+## NEvals: 261 Bestf: -5.09379e-19 
+## NEvals: 265 Bestf: -5.09379e-19 
+## NEvals: 274 Bestf: -5.09379e-19 
+## NEvals: 278 Bestf: -5.09379e-19 
+## NEvals: 289 Bestf: -5.09379e-19 
+## NEvals: 293 Bestf: -5.09379e-19 
+## NEvals: 303 Bestf: -5.09379e-19 
+## Local solution function value: -5.09379e-19 
+## Number of function evaluations in the local search: 317 
+## CPU Time of the local search: 0.71 seconds 
+## 
+## Maximum number of function evaluations achieved 
+## Best solution value -5.09379e-19 
+## Decision vector 50.90909 56.9697 3.030303 3.030303 60 
+## CPU time 3.08 
+## Number of function evaluations 1036</code></pre>
+<p>The function <em>inactivation_OED</em> returns a list of class <code>OEDinactivation</code>. It contains the following entries:</p>
+<ul>
+<li><code>optim</code>: the object returned by the optimization routine.</li>
+<li><code>model</code>: inactivation model used for the simulation.</li>
+<li><code>parms</code>: nominal parameters considered for the OED.</li>
+<li><code>parms_fix</code>: nominal parameters not considered for the OED.</li>
+<li><code>criteria</code>: optimization criteria followed.</li>
+<li><code>sensvar</code>: variable targeted for the OED.</li>
+<li><code>optim_algorithm</code>: optimization algorithm used.</li>
+<li><code>optim_times</code>: optimum measurement times calculated.</li>
+<li><code>penalty</code>: logical indicating whether a penalty function has been used.</li>
+<li><code>times_min</code>: minimum time set for the penalty function.</li>
+<li><code>temp_profile</code>: temperature profile of the experiment.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(global_OED$optim_times)</code></pre></div>
+<pre><code>## [1]  3.030303  3.030303 50.909091 56.969697 60.000000</code></pre>
+<p>The object <code>OEDinactivation</code> includes an S3 implementation which allows the visualization of the results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(global_OED)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="optimum-experiment-design-including-penalty-function" class="section level2">
+<h2>Optimum experiment design including penalty function</h2>
+<p>The function <em>inactivation_OED</em> can generate experiment design unrealizable, with measurements too close in time. This issue is circumvented with the function <em>inactivation_OED_penalty</em> , which implements a penalty function to penalize unfeasible solutions. This function has 11 input arguments, 10 of which are identical to those defined for * inactivation_OED()*:</p>
+<ul>
+<li><em>inactivation_model</em></li>
+<li><em>parms</em></li>
+<li><em>temp_profile</em></li>
+<li><em>parms_fix</em></li>
+<li><em>n_points</em></li>
+<li><em>time_min</em></li>
+<li><em>criteria</em></li>
+<li><em>n_times</em></li>
+<li><em>sensvar</em></li>
+<li><em>optim_algorithm</em></li>
+<li><em>opts_global</em></li>
+</ul>
+<p>The only argument added by this function is <code>time_min</code>. It is a numeric value defining the minimum feasible time between measurements.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">time_min &lt;-<span class="st"> </span><span class="dv">8</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">global_OED_penalty &lt;-<span class="st"> </span><span class="kw">inactivation_OED_penalty</span>(inactivation_model, parms,
+                                               temp_profile, parms_fix,
+                                               n_points, time_min,
+                                               <span class="dt">criteria =</span> <span class="st">&quot;D&quot;</span>, 
+                                               <span class="dt">opts_global =</span> opts_global)</code></pre></div>
+<pre><code>## [1] &quot;eSS R2014A - Enhanced Scatter Search&quot;
+## 
+##  ------------------------------------------------------------------------------ 
+##  essR - Enhanced Scatter Search in R 
+## &lt;c&gt; IIM-CSIC, Vigo, Spain -  email: gingproc@iim.csic.es 
+## ------------------------------------------------------------------------------ 
+## 
+## Number of diverse solutions automatically calculated: 50 
+## Initial Pop: NFunEvals: 55 Bestf: -5.626616e+14 CPUTime: 0.1 Mean: 4.653127e+14 
+## Iteration: 1 NFunEvals: 119 Bestf: -6.410579e+14 CPUTime: 0.24 Mean: -2.414105e+14 
+## Iteration: 2 NFunEvals: 177 Bestf: -6.410579e+14 CPUTime: 0.35 Mean: -2.721589e+14 
+## Iteration: 3 NFunEvals: 235 Bestf: -6.410579e+14 CPUTime: 0.48 Mean: -4.200121e+14 
+## Iteration: 4 NFunEvals: 294 Bestf: -6.410579e+14 CPUTime: 0.6 Mean: -4.728523e+14 
+## Iteration: 5 NFunEvals: 350 Bestf: -6.410579e+14 CPUTime: 0.73 Mean: -4.728523e+14 
+## Iteration: 6 NFunEvals: 409 Bestf: -6.636758e+14 CPUTime: 0.85 Mean: -5.004337e+14 
+## Iteration: 7 NFunEvals: 465 Bestf: -6.636758e+14 CPUTime: 0.96 Mean: -5.004337e+14 
+## Iteration: 8 NFunEvals: 521 Bestf: -6.636758e+14 CPUTime: 1.07 Mean: -5.004337e+14 
+## Iteration: 9 NFunEvals: 578 Bestf: -6.654323e+14 CPUTime: 1.17 Mean: -5.15573e+14 
+## Iteration: 10 NFunEvals: 634 Bestf: -6.654323e+14 CPUTime: 1.29 Mean: -5.15573e+14 
+## Iteration: 11 NFunEvals: 691 Bestf: -6.654323e+14 CPUTime: 1.38 Mean: -5.394854e+14 
+## Iteration: 12 NFunEvals: 748 Bestf: -6.654323e+14 CPUTime: 1.51 Mean: -5.540347e+14 
+## Iteration: 13 NFunEvals: 807 Bestf: -6.654323e+14 CPUTime: 1.68 Mean: -5.630364e+14 
+## Iteration: 14 NFunEvals: 864 Bestf: -6.654323e+14 CPUTime: 1.79 Mean: -5.796889e+14 
+## Iteration: 15 NFunEvals: 921 Bestf: -6.654323e+14 CPUTime: 1.9 Mean: -5.958768e+14 
+## Iteration: 16 NFunEvals: 977 Bestf: -6.654323e+14 CPUTime: 2.01 Mean: -5.958768e+14 
+## Iteration: 17 NFunEvals: 1033 Bestf: -6.654323e+14 CPUTime: 2.12 Mean: -5.958768e+14 
+## 
+## Final local refinement:  DHC 
+## Initial point function value:  -6.654323e+14 
+## NEvals: 24 Bestf: -6.664088e+14 
+## NEvals: 35 Bestf: -6.665309e+14 
+## NEvals: 47 Bestf: -6.665461e+14 
+## NEvals: 49 Bestf: -6.665767e+14 
+## NEvals: 50 Bestf: -6.666377e+14 
+## NEvals: 61 Bestf: -6.666453e+14 
+## NEvals: 63 Bestf: -6.666606e+14 
+## NEvals: 74 Bestf: -6.666625e+14 
+## NEvals: 76 Bestf: -6.666663e+14 
+## NEvals: 88 Bestf: -6.666665e+14 
+## NEvals: 99 Bestf: -6.666666e+14 
+## NEvals: 101 Bestf: -6.666666e+14 
+## NEvals: 112 Bestf: -6.666666e+14 
+## NEvals: 114 Bestf: -6.666667e+14 
+## NEvals: 125 Bestf: -6.666667e+14 
+## NEvals: 137 Bestf: -6.666667e+14 
+## Local solution function value: -6.666667e+14 
+## Number of function evaluations in the local search: 151 
+## CPU Time of the local search: 0.29 seconds 
+## 
+## Maximum number of function evaluations achieved 
+## Best solution value -6.666667e+14 
+## Decision vector 13.86449 21.86449 46.32374 33.72771 0.8924183 
+## CPU time 2.41 
+## Number of function evaluations 1034</code></pre>
+<p>The object returned by <em>inactivation_OED_penalty()</em> is identical to the one returned by <em>inactivation_OED()</em>. The newly calculated optimum design can be checked as before:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(global_OED_penalty$optim_times)</code></pre></div>
+<pre><code>## [1]  0.8924183 13.8644898 21.8644898 33.7277121 46.3237374</code></pre>
+<p>Again, the results can be easily plotted.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(global_OED_penalty)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Alberto Garre, Pablo S. Fernandez and Jose A. Egea (2016). bioinactivation: Simulation of Dynamic Microbial Inactivation. R package version 1.1.2. <a href="https://CRAN.R-project.org/package=bioinactivation" class="uri">https://CRAN.R-project.org/package=bioinactivation</a></p>
+<p>Karline Soetaert and Thomas Petzoldt (2010). Inverse Modelling, Sensitivity and Monte Carlo Analysis in R Using Package FME. Journal of Statistical Software, 33(3), 1-28. URL <a href="http://www.jstatsoft.org/v33/i03/" class="uri">http://www.jstatsoft.org/v33/i03/</a>.</p>
+<p>K. Grijspeerdt and P. Vanrolleghem (1999). Estimating the parameters of the Baranyi model for bacterial growth. Food Microbiology, 16(6), 593-605.</p>
+<p>Kirk D. Dolan and Dharmendra K. Mishra (2013). Parameter Estimation in Food science. Annual revie of Food Science and Tehnology, 4, 401-422.</p>
+<p>Jose A. Egea, David Enriques, Alexandre Fdez. Villaverde and Thomas Cokelaer (2012). MEIGOR: MEIGO - Metaheuristics for bioinformatics global optimization. R package version 1.0.0.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
