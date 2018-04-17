@@ -36,4 +36,3 @@ correlations <- calculate_pars_correlation("Mafart", parms,
 plot(correlations)
 
 }
-

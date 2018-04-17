@@ -12,4 +12,3 @@ criterium_D(FIM)
 \description{
 D Optimality Criterium
 }
-

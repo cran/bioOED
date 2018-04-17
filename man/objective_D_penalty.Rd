@@ -4,7 +4,7 @@
 \alias{objective_D_penalty}
 \title{Objective Function for the D Criterium with Penalty}
 \usage{
-objective_D_penalty(times, sensitivities, time_min)
+objective_D_penalty(times, sensitivities, time_min, ...)
 }
 \arguments{
 \item{times}{Numeric vector of points where the FIM is calculated.}
@@ -12,8 +12,9 @@ objective_D_penalty(times, sensitivities, time_min)
 \item{sensitivities}{An object returned by sensitivity_inactivation.}
 
 \item{time_min}{Numeric defining the minimum time between measurements.}
+
+\item{...}{Additional arguments passed to penalty_function.}
 }
 \description{
 Objective Function for the D Criterium with Penalty
 }
-

@@ -4,18 +4,18 @@
 \alias{penalty_function}
 \title{Penalty Function for OED}
 \usage{
-penalty_function(time_points, time_min, a = 1e+15, b = 2e+15)
+penalty_function(time_points, time_min, a_penalty = 1e+15,
+  b_penalty = 2e+15)
 }
 \arguments{
 \item{time_points}{Numeric vector of time points for the measurements.}
 
 \item{time_min}{Numeric defining the minimum time between measurements.}
 
-\item{a}{Numeric defining the shape of the penalty function. 1e15 by default.}
+\item{a_penalty}{Numeric defining the shape of the penalty function. 1e15 by default.}
 
-\item{b}{Numeric defining the shape of the penalty function. 2e15 by default.}
+\item{b_penalty}{Numeric defining the shape of the penalty function. 2e15 by default.}
 }
 \description{
 Penalty Function for OED
 }
-

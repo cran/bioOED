@@ -14,4 +14,3 @@ objective_D(times, sensitivities)
 \description{
 Objective Function for the D Criterium
 }
-

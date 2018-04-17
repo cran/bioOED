@@ -14,4 +14,3 @@ objective_Emod(times, sensitivities)
 \description{
 Objective Function for the modified-E Criterium
 }
-

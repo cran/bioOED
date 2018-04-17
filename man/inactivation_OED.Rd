@@ -88,4 +88,3 @@ print(local_OED$optim_times)
 plot(local_OED)
 
 }
-

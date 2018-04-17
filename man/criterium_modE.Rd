@@ -15,4 +15,3 @@ value, the FIM is singular and a high value (1e20) is returned. 1e-10 by default
 \description{
 Modified-E Optimality Criterium
 }
-

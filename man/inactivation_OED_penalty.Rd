@@ -6,7 +6,7 @@
 \usage{
 inactivation_OED_penalty(inactivation_model, parms, temp_profile, parms_fix,
   n_points, time_min, criteria = "D", n_times = 100, sensvar = "logN",
-  optim_algorithm = "global", opts_global = NULL)
+  optim_algorithm = "global", opts_global = NULL, ...)
 }
 \arguments{
 \item{inactivation_model}{Character string defining the inacivation model.}
@@ -42,6 +42,8 @@ the optimization. Either \code{global} (default) or \code{local}.}
 \item{opts_global}{List defining the options for the global optimization
 algorithm (see \code{\link{MEIGO}}). By default, global solver with
 a maximum of 50000 function evaluations and printout on every step.}
+
+\item{...}{Additional arguments passed to penalty_function.}
 }
 \value{
 A list of class \code{OEDinactivation} with the following items:
@@ -95,7 +97,7 @@ plot(local_OED)
 
 ## OED with global optimization
 
-opts_global <- list(maxeval=1000,  local_solver=0,
+opts_global <- list(maxeval=500,  local_solver=0,
                     local_finish="DHC", local_iterprint=1)
 
 global_OED <- inactivation_OED_penalty("Mafart", parms, temp_profile, parms_fix,
@@ -107,4 +109,3 @@ plot(global_OED)
 
 
 }
-

@@ -19,4 +19,3 @@ Matrix with the estimation of the Fisher Information Matrix.
 The sensitivities at the different \code{times} are calculated by 
 linear interpolation of the results provided in \code{sensitivities}.
 }
-

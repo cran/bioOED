@@ -26,4 +26,3 @@ the documentation of bioinactivation::predict_inactivation.}
 \description{
 Handler for the calculation of sensitivities of inactivation models
 }
-

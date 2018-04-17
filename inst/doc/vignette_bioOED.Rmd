@@ -4,7 +4,7 @@ author: "Alberto Garre, Jose Lucas Peñalver Soto, Pablo S. Fernandez, Jose A. E
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{bioOED_vignette}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

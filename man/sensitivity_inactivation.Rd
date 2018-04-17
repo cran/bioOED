@@ -59,4 +59,3 @@ plot(sensitivity)
 \seealso{
 \code{\link{sensFun}}
 }
-
