@@ -4,9 +4,10 @@
 \alias{inactivation_OED_penalty}
 \title{Optimum Experimental Design of Microbial Inactivation with Penalty}
 \usage{
-inactivation_OED_penalty(inactivation_model, parms, temp_profile, parms_fix,
-  n_points, time_min, criteria = "D", n_times = 100, sensvar = "logN",
-  optim_algorithm = "global", opts_global = NULL, ...)
+inactivation_OED_penalty(inactivation_model, parms, temp_profile,
+  parms_fix, n_points, time_min, criteria = "D", n_times = 100,
+  sensvar = "logN", optim_algorithm = "global", opts_global = NULL,
+  ...)
 }
 \arguments{
 \item{inactivation_model}{Character string defining the inacivation model.}
@@ -84,6 +85,8 @@ temp_profile <- data.frame(time = c(0, 60), temperature = c(30, 60))
 n_points <- 5
 time_min <- 10
 
+\dontrun{
+
 ## OED with local optimization
 
 set.seed(0123182)
@@ -106,6 +109,9 @@ global_OED <- inactivation_OED_penalty("Mafart", parms, temp_profile, parms_fix,
 
 print(global_OED$optim_times)
 plot(global_OED)
+
+}
+
 
 
 }

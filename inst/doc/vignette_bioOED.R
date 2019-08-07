@@ -84,33 +84,33 @@ n_points <- 5
 
 ## ------------------------------------------------------------------------
 
-opts_global <- list(maxeval=1000,  local_solver=0,
-                    local_finish="DHC", local_iterprint=1)
-
-global_OED <- inactivation_OED(inactivation_model, parms, temp_profile,
-                               parms_fix, n_points, criteria = "D",
-                               opts_global = opts_global)
+# opts_global <- list(maxeval=1000,  local_solver=0,
+#                     local_finish="DHC", local_iterprint=1)
+# 
+# global_OED <- inactivation_OED(inactivation_model, parms, temp_profile,
+#                                parms_fix, n_points, criteria = "D",
+#                                opts_global = opts_global)
 
 
 ## ------------------------------------------------------------------------
-print(global_OED$optim_times)
+# print(global_OED$optim_times)
 
 ## ---- fig.width=8--------------------------------------------------------
-plot(global_OED)
+# plot(global_OED)
 
 ## ------------------------------------------------------------------------
-time_min <- 8
+# time_min <- 8
 
 ## ------------------------------------------------------------------------
-global_OED_penalty <- inactivation_OED_penalty(inactivation_model, parms,
-                                               temp_profile, parms_fix,
-                                               n_points, time_min,
-                                               criteria = "D", 
-                                               opts_global = opts_global)
+# global_OED_penalty <- inactivation_OED_penalty(inactivation_model, parms,
+#                                                temp_profile, parms_fix,
+#                                                n_points, time_min,
+#                                                criteria = "D", 
+#                                                opts_global = opts_global)
 
 ## ------------------------------------------------------------------------
-print(global_OED_penalty$optim_times)
+# print(global_OED_penalty$optim_times)
 
 ## ---- fig.width=8--------------------------------------------------------
-plot(global_OED_penalty)
+# plot(global_OED_penalty)
 

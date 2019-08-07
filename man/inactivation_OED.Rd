@@ -4,8 +4,8 @@
 \alias{inactivation_OED}
 \title{Optimum Experimental Design of Microbial Inactivation}
 \usage{
-inactivation_OED(inactivation_model, parms, temp_profile, parms_fix, n_points,
-  criteria = "D", n_times = 100, sensvar = "logN",
+inactivation_OED(inactivation_model, parms, temp_profile, parms_fix,
+  n_points, criteria = "D", n_times = 100, sensvar = "logN",
   optim_algorithm = "global", opts_global = NULL)
 }
 \arguments{
@@ -80,11 +80,14 @@ n_points <- 5
 
 set.seed(191210)
 
+\dontrun{
 local_OED <- inactivation_OED("Mafart", parms, temp_profile, parms_fix,
                       n_points, criteria = "E-mod", sensvar = "logN",
                       optim_algorithm = "local")
 
 print(local_OED$optim_times)
 plot(local_OED)
+}
+
 
 }

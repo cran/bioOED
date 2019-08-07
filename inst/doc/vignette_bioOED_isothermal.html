@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Jose Lucas Peñalver-Soto, Alberto Garre, Pablo S. Fernandez, Jose A. Egea" />
+
+<meta name="date" content="2019-08-07" />
+
+<title>bioOED: Optimum Experiment Design for Microbial Inactivation. Isothermal inactivation.</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">bioOED: Optimum Experiment Design for Microbial Inactivation. Isothermal inactivation.</h1>
+<h4 class="author">Jose Lucas Peñalver-Soto, Alberto Garre, Pablo S. Fernandez, Jose A. Egea</h4>
+<h4 class="date">2019-08-07</h4>
+
+
+
+<div id="preparation" class="section level2">
+<h2>Preparation</h2>
+<p>For the manipulation of data frames, we will use the <em>tidyverse</em> package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(tidyverse)</a></code></pre></div>
+<pre><code>## -- Attaching packages ------------------------------------------------------------------------ tidyverse 1.2.1 --</code></pre>
+<pre><code>## v ggplot2 3.1.1       v purrr   0.3.2  
+## v tibble  2.1.1       v dplyr   0.8.0.1
+## v tidyr   0.8.3       v stringr 1.4.0  
+## v readr   1.3.1       v forcats 0.4.0</code></pre>
+<pre><code>## -- Conflicts --------------------------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div id="introduction-oed-of-isothermal-experiments" class="section level2">
+<h2>Introduction: OED of isothermal experiments</h2>
+<p>This vignette presents the functions implemented in the <code>bioOED</code> package for Optimal Experimental Design (OED) of isothermal microbial inactivation experiments. Although more simple than dynamic experiments from an experimental point of view, the design of optimal isothermal inactivation experiments is more complex when viewed as an optimization problem. The reason for this is that the decision variables are two-dimensional (time and temperature). In addition, the maximum time of an isothermal experiment is dictated by the detection limit (minimum concentration measurable in the laboratory), that is a function of temperature. This introduces a restriction that must be implemented in the optimization problem.</p>
+<p>The <em>bioOED</em> package can be downloaded form the Comprehensive R Archive Network (CRAN). Once installed, it can be loaded as</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(bioOED)</a></code></pre></div>
+<p>The functions included in <em>bioOED</em> for OED of isothermal experiments are the following:</p>
+<ul>
+<li><em>isothermal_sensitivities()</em>: calculates the local sensitivites of isothermal microbial inactivation.</li>
+<li><em>isothermal_OED()</em>: Designs an optimum experiment based on a given measurement of the FIM. Optimal Experiment Design of isothermal inactivation.</li>
+<li><em>isothermal_OED_limit()</em>: Similar to <em>isothermal_OED()</em>, although including detection limit.</li>
+</ul>
+<p>The simulations of microbial inactivation performed by <em>bioOED</em> are based on the functions implemented in the <em>bioinactivation</em> (Garre et al., 2017) package.</p>
+</div>
+<div id="optimum-isothermal-experiment-design" class="section level2">
+<h2>Optimum Isothermal Experiment Design</h2>
+<p>The OED tries to find the most informative experimental design for a set of restrictions (e.g. number of sampling points). The <em>bioOED</em> package applies a methodology for the OED based on the properties of the Fisher Information Matrix (FIM). Due to the Cramer-Rao inequality, the maximization of the FIM results in the minimization of the expected covariance matrix of the mdoel parameters. This can be done according to several criteria:</p>
+<p>The A-criterion minimizes the trace of the inverse of the FIM: <span class="math display">\[
+\min tr(FIM^{-1})
+\]</span> It can be interpreted as the minimization of the arithmetic mean of the error of each model parameter.</p>
+<p>The modified A-criterion proposes the maximization of the trace of the trace of the FIM: <span class="math display">\[
+\max tr(FIM))
+\]</span> As A-criterion requires the calculation of the inverse of the FIM, which may be problematic the modified A-criterion is used.</p>
+<p>The D-criterion proposes the maximation of the determinant of the FIM <span class="math display">\[
+\max \det\,FIM
+\]</span> This is equivalent to the minimization of the volume of the joint confidence ellipsoids.</p>
+<p>The E-criterion has the objective of the minimization of the greatest eigenvalue of the inverse of the FIM: <span class="math display">\[
+\min \lambda_{max}(FIM^{-1})
+\]</span> Thus minimizing the length of the longest axis of the confidence ellipsoids.</p>
+<p>The modified E-criterion proposes the minimization of the absolute value of the ratio between the maximum and minimum absolute value of the FIM: <span class="math display">\[
+\min abs \left(\frac{\lambda_{max}(FIM)}{\lambda_{min}(FIM)} \right)
+\]</span> Hence, this criterion tries to make the confidence ellipsoid as spherical as possible.</p>
+<p>The functions included in <em>bioOED</em> to select the optimization criteria are the following: <em>criterium_D_iso</em>, <em>criterium_Emod_iso</em>, <em>criterium_E_iso</em>, <em>criterium_Amod_iso</em> and <em>criterium_A_iso</em>.</p>
+</div>
+<div id="microbial-isothermal-inactivation-models" class="section level2">
+<h2>Microbial isothermal inactivation models</h2>
+<p>Microbial inactivation models describe the variation of the logarithm of the microbial count (<span class="math inline">\(\log N\)</span>) during a thermal treatment at temperature <span class="math inline">\(T\)</span> and duration <span class="math inline">\(t\)</span>. The following table describes the inactivation models available in <em>bioOED</em> for OED of isothermal experiments.</p>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="28%"></col>
+<col width="38%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">Model</th>
+<th align="left">Primary model</th>
+<th align="center">Secondary model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">Bigelow</td>
+<td align="left"><span class="math display">\[log_{10}\: N/N_0=-1/D(T)\]</span></td>
+<td align="center"><span class="math display">\[ log_{10}\,D(T)=log_{10}\,D_{ref}-\frac{T-T_{ref}}{z}\]</span></td>
+</tr>
+<tr class="even">
+<td align="right">Peleg</td>
+<td align="left"><span class="math display">\[log_{10}\: N/ N_0 = -b(T)\cdot t^n\]</span></td>
+<td align="center"><span class="math display">\[ b(t)=ln(1+e^{k(T-T_c)})\]</span></td>
+</tr>
+<tr class="odd">
+<td align="right">Mafart</td>
+<td align="left"><span class="math display">\[log_{10}\: N/ N_0 = - \bigg(\frac{t}{\delta(T)}\bigg)^p\]</span></td>
+<td align="center"><span class="math display">\[log_{10}\,\delta(T)=log_{10}\,\delta_{ref}-\frac{T-T_{ref}}{z}\]</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="local-sensitivity-functions" class="section level2">
+<h2>Local sensitivity functions</h2>
+<p>Local sensitivities (<span class="math inline">\(S_{j}\)</span>) play a key role on Optimum Experiment Design. These functions quantify the variation of the output variable, <span class="math inline">\(y\)</span>, (<span class="math inline">\(\log N\)</span> for microbial inactivation) caused by a unitary variation of the model parameter (<span class="math inline">\(\theta_j\)</span>): <span class="math display">\[
+    S_{j} = \frac{\partial y}{\partial \theta_j}
+\]</span></p>
+<p>For isothermal inactivation, the local sensibilities of the Bigelow, Mafart and Peleg can be calculated analytically insted of using numeric methods.</p>
+<div id="local-sensitivities-of-the-bigelow-model" class="section level3">
+<h3>Local sensitivities of the Bigelow model</h3>
+<p>For Bigelow model and isothermal conditions, the sensibilities functions for <span class="math inline">\(D_{T_{ref}}\)</span> and <span class="math inline">\(z\)</span> are: <span class="math display">\[
+S_{D_R} = \frac {\partial \: log N }{ \partial \: D_{T_{ref}}}= \frac{10^{\frac {T-T_{ref}}{z}}\cdot t}{{D_{T{ref}}}^2}
+\]</span> <span class="math display">\[
+S_z =\frac {\partial \: log N }{ \partial \: z}= \frac {10^{\frac {T-T_{ref}}{z}}\cdot (T-T_{ref}) \cdot ln \, 10 \cdot t }{D_{T_{ref}} \cdot z^2}
+\]</span> Note that the Bigelow model has an additional parameter, <span class="math inline">\(T_{ref}\)</span>, without biological meaning but it can improve the model identificability. That is, the value of this parameter is known and is not adjusted from experimental data.</p>
+</div>
+<div id="local-sensitivities-of-the-peleg-model" class="section level3">
+<h3>Local sensitivities of the Peleg model</h3>
+<p>For Peleg model and isothermal conditions, the sensibilities functions for <span class="math inline">\(K\)</span>, <span class="math inline">\(T_C\)</span> and <span class="math inline">\(n\)</span> are: <span class="math display">\[
+S_{K} = t^n e^{K(T-T_C)}\frac {T-T_C }{1+e^{K(T-T_C)}}
+\]</span> <span class="math display">\[
+S_{T_C} = -\frac {t^n e^{K(T-T_C)} K}{1+e^{K(T-T_C)}}
+\]</span> <span class="math display">\[
+S_{n} = t^n ln(t)ln(1+e^{K(T-T_C)})
+\]</span></p>
+</div>
+<div id="local-sensitivities-of-the-mafart-model" class="section level3">
+<h3>Local sensitivities of the Mafart model</h3>
+<p>For Mafart model and isothermal conditions, the sensibilities functions for <span class="math inline">\(p\)</span>, <span class="math inline">\(D_R\)</span> and <span class="math inline">\(z\)</span> are: <span class="math display">\[
+S_{p} =-\bigg(\frac{t}{D_{T_{ref}}\cdot10^{\frac{T_{ref}-T}{z}}}\bigg)^p ln\bigg (\frac {t}{D_{T_{ref}}\cdot10^ \frac{T_{ref}-T}{z}}\bigg)
+\]</span> <span class="math display">\[
+S_{D_R} =\frac{p t^p}{{D_{T_{ref}}}^{p+1} \cdot 10^\frac{T_{ref}p-tp}{z}}
+\]</span> <span class="math display">\[
+S_{z} =- \frac{ln(10)\cdot10^\frac{-T_{ref}p+tp}{z}pt^p(T_{ref}-t)}{{D_{T_{ref}}}^p\cdot z^2}
+\]</span></p>
+<p>Note that the Mafart model has an additional parameter, <span class="math inline">\(T_{ref}\)</span>, without biological meaning but it can improve the model identificability. That is, the value of this parameter is known and is not adjusted from experimental data.</p>
+<p><code>bioOED</code> includes the <code>isothermal_sensitivities</code> that calculates the value of the local sensitivity at the selected sampling points for the selected inactivation model and model parameters. It has three input arguments:</p>
+<ul>
+<li><code>model</code>: A character defining the microbial inactivation model (one of “Bigelow”, “Peleg” or “Mafart”).</li>
+<li>exp_design: a <code>data.frame</code> with two columns (“time” and “temperature”) describing the experimental design.</li>
+<li>pars: a list defining the model parameters according to the rules defined in the <em>bioinactivation</em> package.</li>
+</ul>
+<p>This function can be used to calculate the shape of the local sensitivity functions in the design space. As an example, let’s use the D and z-values of Listeria monocytogenes in laboratory media:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">pars &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">z =</span> <span class="fl">4.2</span>, <span class="dt">D_R =</span> <span class="fl">3.9</span>, <span class="dt">temp_ref =</span> <span class="dv">55</span>)</a></code></pre></div>
+<p>As design espace, let’s study the temperature range commonly used for characterizing thermal inactivation of <em>L. monocytogenes</em>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">design_space &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dt">length =</span> <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb7-2" title="2">                            <span class="kw">seq</span>(<span class="fl">52.5</span>,<span class="dv">60</span>, <span class="dt">length =</span> <span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb7-3" title="3">                            ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="st">  </span><span class="kw">set_names</span>(<span class="st">&quot;times&quot;</span>, <span class="st">&quot;temperature&quot;</span>)</a>
+<a class="sourceLine" id="cb7-5" title="5"></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="kw">head</span>(design_space)</a></code></pre></div>
+<pre><code>##       times temperature
+## 1  0.000000        52.5
+## 2  5.263158        52.5
+## 3 10.526316        52.5
+## 4 15.789474        52.5
+## 5 21.052632        52.5
+## 6 26.315789        52.5</code></pre>
+<p>Now, we can call the <code>isothermal_sensitivities</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">my_sensitivities &lt;-<span class="st"> </span><span class="kw">isothermal_sensitivities</span>(<span class="st">&quot;Bigelow&quot;</span>, design_space, pars)</a></code></pre></div>
+<p>It returns a <code>list</code> of class <code>IsoSensitivities</code> with three attributes:</p>
+<ul>
+<li><code>model</code></li>
+<li><code>pars</code></li>
+<li><code>sensitivities</code></li>
+</ul>
+<p>The attributes <code>model</code> and <code>pars</code> are the inactivation model and model parameters used for calculating the local sensitivites. <code>exp_design</code> is a <code>data.frame</code> with as many rows as <code>exp_design</code> but with several columns added, reporting the local sensitivities. These are named according to the model parameters, so the column <code>D_R</code> stands for the local sensitivity with respect to the D-value at the reference temperature. Also, the columns with the underscore &quot;_scaled&quot; provides the scaled local sensitivities, so <code>D_R_scaled</code> reports the scaled local sensitivity with respect to the D-value at the reference temperature.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">head</span>(my_sensitivities<span class="op">$</span>sensitivities)</a></code></pre></div>
+<pre><code>##       times temperature        D_R         z D_R_scaled   z_scaled
+## 1  0.000000        52.5 0.00000000 0.0000000 0.00000000 0.00000000
+## 2  5.263158        52.5 0.08787778 0.1118409 0.02253276 0.02662880
+## 3 10.526316        52.5 0.17575557 0.2236819 0.04506553 0.05325759
+## 4 15.789474        52.5 0.26363335 0.3355228 0.06759829 0.07988639
+## 5 21.052632        52.5 0.35151113 0.4473638 0.09013106 0.10651518
+## 6 26.315789        52.5 0.43938891 0.5592047 0.11266382 0.13314398</code></pre>
+<p>The <code>bioOED</code> package implements S3 methods for visualizing the local sensitivities:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">plot</span>(my_sensitivities)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The plot generated is made of one facet for each model parameter. The areas with equal local sensibility are depicted with solid lines, whereas the magnitude of the local sensitivity function on each point of the design space is illustrated with a color range.</p>
+<p>For isothermal experiments, the maximum duration of the experiment is temperature dependent (because of the detection limit) and plays an importal role for the experimental design. It can be illustrated in the plot by passing a value to the optional argument <code>limit</code>, that represents the maximum number of log-reductions that can be observed in the lab. For instance, with an initial microbial count of 8 log UFC and a detection limit of 1 log UFC, <code>limit = 7</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">plot</span>(my_sensitivities, <span class="dt">limit =</span> <span class="dv">7</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+</div>
+<div id="oed-of-microbial-inactivation-for-isothermal-conditions" class="section level2">
+<h2>OED of microbial inactivation for isothermal conditions</h2>
+<p>The function <em>isothermal_OED()</em> is able to generate an optimum isothermal experiment design for an isothermal microbial inactivation experiment. This function has 9 input arguments:</p>
+<ul>
+<li><em>model</em></li>
+<li><em>pars</em></li>
+<li><em>n_points</em></li>
+<li><em>min_time</em></li>
+<li><em>max_time</em></li>
+<li><em>min_temp</em></li>
+<li><em>max_temp</em></li>
+<li><em>criterium</em></li>
+<li><em>opts</em></li>
+</ul>
+<p>The inactivation model to use for the calculation is defined by the input argument <em>model</em>. It must be compatible with the <em>predict_inactivation()</em> function from the <strong>bioinactivation</strong> package. The nominal values of the model parameters are provided by the argument <code>pars</code>. For this example, the same parameter values as for the previous example will be used.</p>
+<p>The number of measurements to be taken during the experiment are defined by the argument <code>n_points</code>. It must be an integer greater than 0. For the purpose of this example, we will set it to 5 (in actual conditions, this number is usually larger):</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">n_points &lt;-<span class="st"> </span><span class="dv">5</span></a></code></pre></div>
+<p>The design space is defined through the inputs arguments <code>min_time</code>, <code>max_time</code>, <code>min_temp</code> and <code>max_temp</code>. We will again use the same space as for the previous example.</p>
+<p>The global optimization algorithm used is the MEIGO algorithm from the <strong>MEIGOR</strong> package (Egea et al., 2012). By default, a global solver with a maximum of 2000 function evaluations and the local search algorithm used is “DHC”. This can be changed through the <code>opts</code> argument. For information regarding the format of this argument, refer to the help page of the <em>MEIGO()</em> function. For illustration purposes, only 500 function evaluations will be made. We recommend the user to set larger values for this argument, to ensure convergence of the optimization algorithm.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="co"># opts &lt;- list(maxeval=500,local_finish=&quot;DHC&quot;)</span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="co"># </span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="co"># OED &lt;- isothermal_OED(&quot;Bigelow&quot;, pars, n_points, criterion = &quot;D&quot;,</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#                       min_time = 0, max_time = 100,</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#                       min_temp = 52.5, max_temp = 60,</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">#                       opts = opts)</span></a></code></pre></div>
+<p>The function <em>isothermal_OED</em> returns a list of class <code>OEDisothermal</code>. It contains the following entries:</p>
+<ul>
+<li><code>optim</code>: the object returned by the optimization routine.</li>
+<li><code>model</code>: inactivation model used for the simulation.</li>
+<li><code>pars</code>: nominal parameters considered for the OED.</li>
+<li><code>criterion</code>: optimization criteria followed.</li>
+<li><code>optim_algorithm</code>: optimization algorithm used.</li>
+<li><code>optim_design</code>: optimal data frame containing times and temperatures.</li>
+<li><code>limit</code>: detection limit set for the calculation (NULL for <code>isothermal_OED</code>).</li>
+</ul>
+<p>The optimum design can be accessed with the <code>optim_design</code> argument:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="co"># OED$optim_design</span></a></code></pre></div>
+<p>It can be easily visualized using the S3 plot method implemented for <code>OEDisothermal</code> objects:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="co"># plot(OED)</span></a></code></pre></div>
+</div>
+<div id="oed-for-isothermal-conditions-and-detection-limit" class="section level2">
+<h2>OED for isothermal conditions and detection limit</h2>
+<p>The maximum duration of an isothermal experiment is defined by the detection limit (the minimum microbial count that can be measured in the laboratory). Because the inactivation rate varies with temperature, the maximum duration of the experiment is temperature dependent. This can be considered in the OED with the <code>isothermal_OED_limit</code> function. This function has 11 input arguments, 9 of which are identical to those defined for <em>inactivation_OED()</em>:</p>
+<ul>
+<li><em>model</em></li>
+<li><em>pars</em></li>
+<li><em>limit</em></li>
+<li><em>n_points</em></li>
+<li><em>min_time</em></li>
+<li><em>max_time</em></li>
+<li><em>min_temp</em></li>
+<li><em>max_temp</em></li>
+<li><em>criterion</em></li>
+<li><em>opts</em></li>
+</ul>
+<p>The only argument added by this function is <code>limit</code>. It is a numerical value describing the maximum number of log-reductions that can be identified in the experiment (equal to the initial microbial count menos de detection limit). Assumming an initial microbial count of 8 log CFU/ml and a detection limit of 1 log CFU/ml:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">limit &lt;-<span class="st"> </span><span class="dv">7</span></a></code></pre></div>
+<p>Now, we call the <code>isothermal_OED_limit</code> function with the same parameters as before, including the detection limit:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co"># OED_limit &lt;- isothermal_OED_limit(&quot;Bigelow&quot;, pars, n_points, criterion = &quot;D&quot;, limit,</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="co">#                                   min_time = 0, max_time = 100, min_temp = 95,</span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="co">#                                   max_temp = 110, opts)</span></a></code></pre></div>
+<p>The object returned by <em>isothermal_OED_limit()</em> is identical to the one returned by <em>isothermal_OED()</em>. The optimal experiment design can be retrieved in the <code>optim_design</code> entry:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="co"># print(OED_limit$optim_design)</span></a></code></pre></div>
+<p>Again, the results can be easily plotted.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="co"># plot(OED_limit)</span></a></code></pre></div>
+<p>Note that the detection limit is now added to the plot as a green line.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Garre, A., Fernández, P. S., Lindqvist, R., &amp; Egea, J. A. (2017). Bioinactivation: Software for modelling dynamic microbial inactivation. Food Research International, 93, 66–74. <a href="https://doi.org/10.1016/j.foodres.2017.01.012" class="uri">https://doi.org/10.1016/j.foodres.2017.01.012</a></p>
+<p>Jose A. Egea, David Enriques, Alexandre Fdez. Villaverde and Thomas Cokelaer (2012). MEIGOR: MEIGO - Metaheuristics for bioinformatics global optimization. R package version 1.0.0.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

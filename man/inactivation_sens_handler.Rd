@@ -4,8 +4,8 @@
 \alias{inactivation_sens_handler}
 \title{Handler for the calculation of sensitivities of inactivation models}
 \usage{
-inactivation_sens_handler(model_parms, inactivation_model, times, temp_profile,
-  parms_fix)
+inactivation_sens_handler(model_parms, inactivation_model, times,
+  temp_profile, parms_fix)
 }
 \arguments{
 \item{model_parms}{A named vector or list with the values of the model parameters. See

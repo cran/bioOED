@@ -4,8 +4,9 @@
 \alias{sensitivity_inactivation}
 \title{Local sensitivities of microbial inactivation}
 \usage{
-sensitivity_inactivation(inactivation_model, parms, temp_profile, parms_fix,
-  n_times = 100, varscale = 1, parscale = 1, sensvar = "logN", ...)
+sensitivity_inactivation(inactivation_model, parms, temp_profile,
+  parms_fix, n_times = 100, varscale = 1, parscale = 1,
+  sensvar = "logN", ...)
 }
 \arguments{
 \item{inactivation_model}{Character defining the inactivation model to use.}
